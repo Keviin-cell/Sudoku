@@ -9,12 +9,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="749.0" prefWidth="749.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="749.0" prefWidth="749.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sudoku.controller.MenuController">
    <children>
       <ImageView fitHeight="749.0" fitWidth="844.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/SUDOKU%20FONDO.png" />
+            <Image url="@../images/SUDOKU_FONDO.png" />
          </image>
       </ImageView>
       <Label layoutX="176.0" layoutY="205.0" prefHeight="118.0" prefWidth="399.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 4, 0.2, 2, 2);" text="SUDOKU" textFill="WHITE">
@@ -22,7 +21,7 @@
             <Font name="Arial Black" size="80.0" />
          </font>
       </Label>
-      <Button layoutX="249.0" layoutY="347.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="252.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="INICIAR" textFill="WHITE">
+      <Button fx:id="gameButton" layoutX="249.0" layoutY="347.0" mnemonicParsing="false" onAction="#changeScene" prefHeight="59.0" prefWidth="252.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="INICIAR" textFill="WHITE">
          <font>
             <Font name="Arial Black" size="20.0" />
          </font>
@@ -33,7 +32,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button layoutX="249.0" layoutY="422.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="252.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="INSTRUCCIONES" textFill="WHITE">
+      <Button fx:id="instruccionesButton" layoutX="249.0" layoutY="422.0" mnemonicParsing="false" onAction="#changeScene" prefHeight="59.0" prefWidth="252.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="INSTRUCCIONES" textFill="WHITE">
          <font>
             <Font name="Arial Black" size="20.0" />
          </font>
@@ -44,7 +43,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button layoutX="249.0" layoutY="496.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="252.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="CRÉDITOS" textFill="WHITE">
+      <Button fx:id="creditosButton" layoutX="249.0" layoutY="496.0" mnemonicParsing="false" onAction="#changeScene" prefHeight="59.0" prefWidth="252.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="CRÉDITOS" textFill="WHITE">
          <font>
             <Font name="Arial Black" size="20.0" />
          </font>
