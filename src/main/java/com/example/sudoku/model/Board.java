@@ -11,6 +11,7 @@ public class Board {
 
     private final int size = 6;
     private Cell[][] sudoku;
+    private int[][] solution;
 
     // --- Inner Classes ---
 
@@ -96,31 +97,47 @@ public class Board {
         }
     }
 
+    private void saveSolution() {
+        solution = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                solution[i][j] = sudoku[i][j].getValue();
+            }
+        }
+    }
+
+
     public boolean revealOneCell() {
+        List<Position> vacias = new ArrayList<>();
+
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-
                 if (sudoku[row][col].getValue() == 0) {
-
-                    List<Integer> options = Arrays.asList(1, 2, 3, 4, 5, 6);
-                    Collections.shuffle(options);
-
-                    for (int value : options) {
-                        if (isValid(row, col, value)) {
-
-                            sudoku[row][col].setValue(value);
-                            sudoku[row][col].setEditable(false);
-
-                            return true;
-                        }
-                    }
-
+                    vacias.add(new Position(row, col));
                 }
             }
         }
 
-        return false;
+        if (vacias.isEmpty()) return false;
+
+        Collections.shuffle(vacias);
+
+        for (Position p : vacias) {
+            List<Integer> options = Arrays.asList(1, 2, 3, 4, 5, 6);
+            Collections.shuffle(options);
+
+            for (int value : options) {
+                if (isValid(p.row, p.col, value)) {
+                    sudoku[p.row][p.col].setValue(value);
+                    sudoku[p.row][p.col].setEditable(false);
+                    return true;
+                }
+            }
+        }
+
+        return false; // No se pudo revelar ninguna
     }
+
 
 
 
