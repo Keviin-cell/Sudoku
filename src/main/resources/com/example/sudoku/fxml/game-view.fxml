@@ -27,9 +27,20 @@
         </font>
     </Label>
 
+    <Label fx:id="statusFoursLabel"
+           layoutX="176.0" layoutY="135.0"
+           prefHeight="30.0" prefWidth="400.0"
+           style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0.2, 1, 1);"
+           text="4 encontrados: 0 / 6"
+           textFill="#FFD700">
+        <font>
+            <Font name="Arial Black" size="18.0"/>
+        </font>
+    </Label>
+
     <Button fx:id="helpButton"
             onAction="#OnHelpButtonClick" layoutX="464.0" layoutY="652.0" mnemonicParsing="false" prefHeight="54.0"
-            prefWidth="234.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="HELP"
+            prefWidth="234.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="AYUDA"
             textFill="WHITE">
         <font>
             <Font name="Arial Black" size="20.0"/>
@@ -64,7 +75,7 @@
 
     <Button fx:id="newGameButton"
             onAction="#OnNewGameClick" layoutX="51.0" layoutY="652.0" mnemonicParsing="false" prefHeight="54.0"
-            prefWidth="234.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="NEW GAME"
+            prefWidth="234.0" style="-fx-background-color: #5388A4; -fx-border-radius: 100;" text="NUEVO JUEGO"
             textFill="WHITE">
         <font>
             <Font name="Arial Black" size="20.0"/>

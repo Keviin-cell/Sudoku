@@ -2,14 +2,10 @@ package com.example.sudoku.controller;
 
 import com.example.sudoku.model.Board;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 
@@ -20,7 +16,6 @@ import java.util.ResourceBundle;
 /**
  * Controller for the main game window of the Sudoku application.
  * Handles rendering the board, validating input, managing hint usage, and resetting the game.
- *
  * This class is linked to the FXML layout for the game interface.
  *
  * @author Kevin Muñoz
@@ -29,10 +24,10 @@ import java.util.ResourceBundle;
 public class GameController implements Initializable {
 
     @FXML
-    private Button newGameButton;
+    private Button newGameButton, helpButton;
 
     @FXML
-    private Button helpButton;
+    private Label statusFoursLabel;
 
     @FXML
     private GridPane grid;
@@ -123,9 +118,9 @@ public class GameController implements Initializable {
 
                         if (board.isComplete()) {
                             Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-                            alerta.setTitle("¡Juego Terminado!");
-                            alerta.setHeaderText("El juego ha acabado");
-                            alerta.setContentText("Felicidades. Has ganado");
+                            alerta.setTitle("Game Over!");
+                            alerta.setHeaderText("The game is finished");
+                            alerta.setContentText("Congratulations! You've won.");
                             alerta.showAndWait();
                             Platform.exit();
                         }
@@ -144,12 +139,39 @@ public class GameController implements Initializable {
                         } else {
                             cell.setStyle(defaultStyle);
                         }
+
+                        // Update the status of found 4s
+                        updateFoursStatus();
                     });
                 }
 
                 grid.add(cell, col, row);
             }
         }
+
+        // Update the status after rendering the board
+        updateFoursStatus();
+    }
+
+    /**
+     * Method that counts how many 4s are visible and valid on the board.
+     * Updates the corresponding Label text with the number of valid 4s.
+     */
+    private void updateFoursStatus() {
+        int countFours = 0;
+        int[][] boardValues = board.getValues();
+
+        // Loop through the entire board to count how many valid 4s are there
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 6; col++) {
+                if (boardValues[row][col] == 4 && board.isValid(row, col, 4)) {
+                    countFours++;
+                }
+            }
+        }
+
+        // Update the Label text with the number of valid 4s found
+        statusFoursLabel.setText("4 encontrados: " + countFours + " / 6");
     }
 
     /**
