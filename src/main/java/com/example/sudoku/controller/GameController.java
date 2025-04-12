@@ -125,7 +125,7 @@ public class GameController implements Initializable {
 
 
                     cell.setOnMouseClicked(event -> cell.setStyle(style + "-fx-background-color: #f0f8ff;"));
-                    remain.setText(""+ board.remainingNum(boardValues));
+
 
 
                     cell.textProperty().addListener((obs, oldText, newText) -> {
@@ -135,6 +135,7 @@ public class GameController implements Initializable {
                         }
 
                         int value = newText.isEmpty() ? 0 : Integer.parseInt(newText);
+                        board.setValue(currentRow, currentCol, value);
 
 
                         if (board.isComplete()) {
@@ -151,13 +152,14 @@ public class GameController implements Initializable {
                         } else {
                             cell.setStyle(style.toString());
                         }
-                        remain.setText(""+ board.remainingNum(boardValues));
+                        remain.setText("Faltan " + board.remainingNum(4) + " cuatros");
                     });
                 }
 
                 grid.add(cell, col, row);
             }
         }
+        remain.setText("Faltan " + board.remainingNum(4) + " cuatros");
 
     }
 

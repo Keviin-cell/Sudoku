@@ -251,19 +251,20 @@ public class Board {
     }
 
     //
-    public int remainingNum(int[][] boardValues) {
+    public int remainingNum(int num) {
         int count = 0;
 
-        for(int row = 0; row < size; row++){
-            for(int col = 0; col < size; col++) {
-                if(boardValues[row][col] == 4){
-                    count = count + 1;
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                if (sudoku[row][col].getValue() == 4) {
+                    count++;
                 }
             }
         }
 
-        int totales = 6 - count;
-        return totales;
+        // Suponemos que debe haber 6 cuatros (1 por fila, columna, y región)
+        return 6 - count;
     }
+
 
 }
