@@ -84,6 +84,16 @@ public class Board {
         }
     }
 
+  public int[][] getValores() {
+    int[][] valores = new int[6][6];
+    for (int i = 0; i < 6; i++) {
+      for (int j = 0; j < 6; j++) {
+        valores[i][j] = sudoku[i][j].getValor(); // Asumiendo que tienes Celda.getValor()
+      }
+    }
+    return valores;
+  }
+
 
     public boolean esValido(int fila, int col, int valor) {
         // Verificar fila
@@ -92,6 +102,7 @@ public class Board {
                 return false;
             }
         }
+
 
         // Verificar columna
         for (int i = 0; i < size; i++) {
