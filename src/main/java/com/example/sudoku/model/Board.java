@@ -1,23 +1,17 @@
 package com.example.sudoku.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import java.util.*;
 
 public class Board {
 
-    private  Celda[][] sudoku;
-    private int [][] valores;
-    private int size = 6;
+    private Celda[][] sudoku;
+    private final int size = 6;
 
+    private static class Position {
+        int row, col;
 
-    private static class Posicion {
-        int fila, col;
-
-        public Posicion(int fila, int col) {
-            this.fila = fila;
+        public Position(int row, int col) {
+            this.row = row;
             this.col = col;
         }
     }
@@ -25,7 +19,7 @@ public class Board {
     public Board() {
     }
 
-    public boolean generarTablero() {
+    public void generateBoard() {
         sudoku = new Celda[size][size];
 
         for (int i = 0; i < size; i++) {
@@ -35,91 +29,85 @@ public class Board {
             }
         }
 
-        return resolver(0, 0);
+        solve(0, 0);
     }
 
-    public boolean resolver(int fila, int col) {
-        if (fila == size) {
-            return true; // Tablero completo
+    public boolean solve(int row, int col) {
+        if (row == size) {
+            return true;
         }
 
-        int siguienteFila = (col == size - 1) ? fila + 1 : fila;
-        int siguienteCol = (col + 1) % size;
+        int nextRow = (col == size - 1) ? row + 1 : row;
+        int nextCol = (col + 1) % size;
 
-        List<Integer> numeros = Arrays.asList(1, 2, 3, 4, 5, 6);
-        Collections.shuffle(numeros); // Mezcla aleatoria
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+        Collections.shuffle(numbers);
 
-        for (int num : numeros) {
-            if (esValido(fila, col, num)) {
-                sudoku[fila][col].setValor(num);
+        for (int num : numbers) {
+            if (isValid(row, col, num)) {
+                sudoku[row][col].setValor(num);
 
-                if (resolver(siguienteFila, siguienteCol)) {
+                if (solve(nextRow, nextCol)) {
                     return true;
                 }
-                sudoku[fila][col].setValor(0); // Backtrack
+                sudoku[row][col].setValor(0);
             }
         }
 
-        return false; // No se pudo resolver desde esta posición
+        return false;
     }
 
-
-    public void limpiarCeldas(int cantidad) {
-        List<Posicion> posiciones = new ArrayList<>();
+    public void clearCells(int count) {
+        List<Position> positions = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                posiciones.add(new Posicion(i, j));
+                positions.add(new Position(i, j));
             }
         }
 
-        Collections.shuffle(posiciones);
+        Collections.shuffle(positions);
 
-        for (int i = 0; i < cantidad && i < posiciones.size(); i++) {
-            int f = posiciones.get(i).fila;
-            int c = posiciones.get(i).col;
+        for (int i = 0; i < count && i < positions.size(); i++) {
+            int r = positions.get(i).row;
+            int c = positions.get(i).col;
 
-            sudoku[f][c].setValor(0);
-            sudoku[f][c].setEditable(true);
+            sudoku[r][c].setValor(0);
+            sudoku[r][c].setEditable(true);
         }
     }
 
-  public int[][] getValores() {
-    int[][] valores = new int[6][6];
-    for (int i = 0; i < 6; i++) {
-      for (int j = 0; j < 6; j++) {
-        valores[i][j] = sudoku[i][j].getValor(); // Asumiendo que tienes Celda.getValor()
-      }
+    public int[][] getValues() {
+        int[][] values = new int[6][6];
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 6; j++) {
+                values[i][j] = sudoku[i][j].getValor();
+            }
+        }
+        return values;
     }
-    return valores;
-  }
 
-
-    public boolean esValido(int fila, int col, int valor) {
-        // Verificar fila
+    public boolean isValid(int row, int col, int value) {
         for (int j = 0; j < size; j++) {
-            if (j != col && sudoku[fila][j].getValor() == valor) {
+            if (j != col && sudoku[row][j].getValor() == value) {
                 return false;
             }
         }
 
-
-        // Verificar columna
         for (int i = 0; i < size; i++) {
-            if (i != fila && sudoku[i][col].getValor() == valor) {
+            if (i != row && sudoku[i][col].getValor() == value) {
                 return false;
             }
         }
 
-        // Verificar bloque 2x3
-        int inicioFila = (fila / 2) * 2;
-        int inicioCol = (col / 3) * 3;
+        int startRow = (row / 2) * 2;
+        int startCol = (col / 3) * 3;
 
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 3; j++) {
-                int f = inicioFila + i;
-                int c = inicioCol + j;
-                if ((f != fila || c != col) && sudoku[f][c].getValor() == valor) {
+                int r = startRow + i;
+                int c = startCol + j;
+                if ((r != row || c != col) && sudoku[r][c].getValor() == value) {
                     return false;
                 }
             }
@@ -128,27 +116,25 @@ public class Board {
         return true;
     }
 
-
-    public int getValor(int fila, int col) {
-        return sudoku[fila][col].getValor();
+    public int getValue(int row, int col) {
+        return sudoku[row][col].getValor();
     }
 
-    public void setValor(int fila, int col, int valor) {
-        if (sudoku[fila][col].getEsEditable()) {
-            sudoku[fila][col].setValor(valor);
+    public void setValue(int row, int col, int value) {
+        if (sudoku[row][col].getEsEditable()) {
+            sudoku[row][col].setValor(value);
         }
     }
 
-
-    public Celda[][] getCeldas() {
+    public Celda[][] getCells() {
         return sudoku;
     }
 
-    public boolean estaCompleto() {
+    public boolean isComplete() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                int valor = sudoku[i][j].getValor();
-                if (valor == 0 || !esValido(i, j, valor)) {
+                int value = sudoku[i][j].getValor();
+                if (value == 0 || !isValid(i, j, value)) {
                     return false;
                 }
             }
@@ -156,10 +142,8 @@ public class Board {
         return true;
     }
 
-
-    public void reiniciar() {
-        generarTablero();
-        limpiarCeldas(12);
+    public void reset() {
+        generateBoard();
+        clearCells(12);
     }
-
 }
