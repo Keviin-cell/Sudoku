@@ -21,44 +21,43 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("✅ GameController activado.");
+        System.out.println("✅ GameController activated.");
 
         board = new Board();
 
-        // Usamos Platform.runLater para evitar problemas con JavaFX en M1
         Platform.runLater(() -> {
-            board.reiniciar(); // Pregunta por dificultad y genera tablero
-            renderizarTablero(board.getValores());
+            board.reset();
+            renderBoard(board.getValues());
         });
     }
 
-    private void renderizarTablero(int[][] tablero) {
+    private void renderBoard(int[][] boardValues) {
         grid.getChildren().clear();
 
-        for (int fila = 0; fila < 6; fila++) {
-            for (int columna = 0; columna < 6; columna++) {
-                TextField celda = new TextField();
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 6; col++) {
+                TextField cell = new TextField();
 
-                celda.setPrefWidth(60);
-                celda.setPrefHeight(60);
-                celda.setAlignment(Pos.CENTER);
-                celda.setFont(Font.font("Arial", 20));
+                cell.setPrefWidth(60);
+                cell.setPrefHeight(60);
+                cell.setAlignment(Pos.CENTER);
+                cell.setFont(Font.font("Arial", 20));
 
-                // Estilo base: sin bordes redondeados, borde negro fino, fondo blanco
-                celda.setStyle(
-                        "-fx-background-color: white;" +
-                                "-fx-border-color: black;" +
-                                "-fx-border-width: 1;" +
-                                "-fx-text-fill: #222;" +
-                                "-fx-alignment: center;" +
-                                "-fx-background-radius: 0;" +
-                                "-fx-border-radius: 0;"
-                );
+                // Default editable cell style
+                String defaultStyle = "-fx-background-color: white;" +
+                        "-fx-border-color: black;" +
+                        "-fx-border-width: 1;" +
+                        "-fx-text-fill: #222;" +
+                        "-fx-alignment: center;" +
+                        "-fx-background-radius: 0;" +
+                        "-fx-border-radius: 0;";
 
-                if (tablero[fila][columna] != 0) {
-                    celda.setText(String.valueOf(tablero[fila][columna]));
-                    celda.setEditable(false);
-                    celda.setStyle(
+                cell.setStyle(defaultStyle);
+
+                if (boardValues[row][col] != 0) {
+                    cell.setText(String.valueOf(boardValues[row][col]));
+                    cell.setEditable(false);
+                    cell.setStyle(
                             "-fx-background-color: #e6e6e6;" +
                                     "-fx-border-color: black;" +
                                     "-fx-border-width: 1;" +
@@ -69,14 +68,38 @@ public class GameController implements Initializable {
                                     "-fx-border-radius: 0;"
                     );
                 } else {
-                    celda.textProperty().addListener((obs, oldText, newText) -> {
-                        if (!newText.matches("[1-6]?")) {
-                            celda.setText(oldText);
+                    final int currentRow = row;
+                    final int currentCol = col;
+
+                    cell.textProperty().addListener((obs, oldText, newText) -> {
+                        if (!newText.matches("[1-6]?") || newText.length() > 1) {
+                            cell.setText(oldText);
+                            return;
+                        }
+
+                        int value = newText.isEmpty() ? 0 : Integer.parseInt(newText);
+                        board.setValue(currentRow, currentCol, value);
+
+                        if (value != 0 && !board.isValid(currentRow, currentCol, value)) {
+                            // Invalid input: highlight red
+                            cell.setStyle(
+                                    "-fx-background-color: #ffcccc;" +
+                                            "-fx-border-color: #ff0000;" +
+                                            "-fx-border-width: 2;" +
+                                            "-fx-text-fill: #ff0000;" +
+                                            "-fx-alignment: center;" +
+                                            "-fx-background-radius: 0;" +
+                                            "-fx-border-radius: 0;"
+                            );
+                            System.out.println("❌ Invalid value at [" + currentRow + "," + currentCol + "]");
+                        } else {
+                            // Valid input: reset to default style
+                            cell.setStyle(defaultStyle);
                         }
                     });
                 }
 
-                grid.add(celda, columna, fila);
+                grid.add(cell, col, row);
             }
         }
     }
