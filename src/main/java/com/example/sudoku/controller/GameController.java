@@ -127,6 +127,7 @@ public class GameController implements Initializable {
                     cell.setOnMouseClicked(event -> cell.setStyle(style + "-fx-background-color: #f0f8ff;"));
                     remain.setText(""+ board.remainingNum(boardValues));
 
+
                     cell.textProperty().addListener((obs, oldText, newText) -> {
                         if (!newText.matches("[1-6]?") || newText.length() > 1) {
                             cell.setText(oldText);
@@ -157,7 +158,7 @@ public class GameController implements Initializable {
                 grid.add(cell, col, row);
             }
         }
-        remain.setText(""+ board.remainingNum(boardValues));
+
     }
 
     /**
