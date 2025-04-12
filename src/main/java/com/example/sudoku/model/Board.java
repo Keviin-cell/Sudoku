@@ -64,7 +64,9 @@ public class Board {
     public void clearCells(int count) {
         List<Position> positions = new ArrayList<>();
 
-        for (int i = 0; i < size; i++)
+        // El ciclo for para obtener las posiciones del sudoku y posteriormente limpiarlas de forma aleatoria
+        // no obtendrá las primeras dos filas, es decir que estas quedarán intactas
+        for (int i = 2; i < size; i++)
             for (int j = 0; j < size; j++)
                 positions.add(new Position(i, j));
 
@@ -108,11 +110,14 @@ public class Board {
     /**
      * Saves the current board state as the correct solution (used for hints).
      */
-    private void saveSolution() {
+    private int[][] saveSolution() {
         solution = new int[size][size];
-        for (int i = 0; i < size; i++)
-            for (int j = 0; j < size; j++)
+        for (int i = 0; i < size; i++){
+            for (int j = 0; j < size; j++){
                 solution[i][j] = sudoku[i][j].getValue();
+            }
+        }
+        return solution;
     }
 
     /**
@@ -244,4 +249,24 @@ public class Board {
 
         return true;
     }
+
+    //
+    public void remainingNum(int[][] boardValues) {
+        int count = 0;
+        int[][] numbers = saveSolution();
+
+        for(int row = 0; row < size; row++){
+            for(int col = 0; col < size; col++) {
+                if(boardValues[row][col] == 4){
+                    count = count + 1;
+                }
+            }
+        }
+
+        int totales = size - count;
+        System.out.println("Los 4 restantes son: " + totales +" casillas");
+    }
+
+
+
 }
