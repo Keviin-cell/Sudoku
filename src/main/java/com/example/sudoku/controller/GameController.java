@@ -98,6 +98,16 @@ public class GameController implements Initializable {
                         int value = newText.isEmpty() ? 0 : Integer.parseInt(newText);
                         board.setValue(currentRow, currentCol, value);
 
+                        if (board.isComplete()) {
+                            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+                            alerta.setTitle("¡Juego Terminado!");
+                            alerta.setHeaderText("El juego ha acabado");
+                            alerta.setContentText("Felicidades. Has ganado");
+                            alerta.showAndWait();
+                            Platform.exit();
+                        }
+
+
                         if (value != 0 && !board.isValid(currentRow, currentCol, value)) {
                             // Invalid input: highlight red
                             cell.setStyle(
@@ -118,14 +128,10 @@ public class GameController implements Initializable {
                 }
 
                 grid.add(cell, col, row);
-                if (board.isComplete()){
-                    Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-                    alerta.setTitle("¡Juego Terminado!");
-                    alerta.setHeaderText("El juego ha acabado");
-                    alerta.setContentText("Felicidades. Has ganado");
+
                 }
+
             }
-        }
     }
 
     @FXML
