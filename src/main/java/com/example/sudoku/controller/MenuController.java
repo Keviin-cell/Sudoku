@@ -1,44 +1,63 @@
 package com.example.sudoku.controller;
 
+import com.example.sudoku.view.GameWindow;
+import com.example.sudoku.view.InstructionsWindow;
+import com.example.sudoku.view.CreditsWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class MenuController {
-    /**
-     * Cambia la escena actual a la vista correspondiente según el botón presionado.
-     *
-     * <p>El método obtiene el botón que activó el evento, extrae su ID y lo utiliza para
-     * determinar qué archivo FXML debe cargarse.</p>
-     *
-     * @param event Evento de acción generado al hacer clic en un botón del menú.
-     */
+
     @FXML
-    public void changeScene(ActionEvent event) {
+    private Button btnPlay;
+    @FXML
+    private Button btnInstructions;
+    @FXML
+    private Button btnCredits;
+
+
+    private void closeScene(ActionEvent event) {
         try {
-            // Obtener ID del botón presionado
-            String buttonId = ((Button) event.getSource()).getId();
-
-            // Generar el nombre del archivo FXML
-            String fxmlFile = buttonId.replace("Button", "-view.fxml");
-
-            // Cargar el archivo FXML desde el paquete correcto
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sudoku/fxml/" + fxmlFile));
-            Parent newScene = loader.load();
-
-            // Cambiar la escena en la misma ventana
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(newScene));
-            stage.show();
-
-        } catch (IOException e) {
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            currentStage.close();
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    void onPlayClick(ActionEvent event) {
+        try {
+            closeScene(event);
+            GameWindow gameWindow = new GameWindow();
+            gameWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Add proper error handling/logging
+        }
+    }
+
+    @FXML
+    void onInstructionsClick(ActionEvent event) {
+        try {
+            closeScene(event);
+            InstructionsWindow instructionsWindow = new InstructionsWindow();
+            instructionsWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Add proper error handling/logging
+        }
+    }
+
+    @FXML
+    void onCreditsClick(ActionEvent event) {
+        try {
+            closeScene(event);
+            CreditsWindow creditsWindow = new CreditsWindow();
+            creditsWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Add proper error handling/logging
         }
     }
 }

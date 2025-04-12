@@ -70,6 +70,10 @@ public class GameController implements Initializable {
                 } else {
                     final int currentRow = row;
                     final int currentCol = col;
+                    cell.setOnMouseClicked(event -> {
+                        System.out.println("🖱️ Clicked cell at [" + currentRow + "," + currentCol + "]");
+                        cell.setStyle(cell.getStyle() + "-fx-background-color: #f0f8ff;"); // light blue focus
+                    });
 
                     cell.textProperty().addListener((obs, oldText, newText) -> {
                         if (!newText.matches("[1-6]?") || newText.length() > 1) {
