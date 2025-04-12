@@ -3,20 +3,25 @@ package com.example.sudoku.model;
 import java.util.*;
 
 /**
- * Represents a 6x6 Sudoku board with logic for generation, validation and manipulation.
+ * Represents a 6x6 Sudoku board with logic for generation, validation, and gameplay operations.
+ * Handles full solution generation, clearing cells for the puzzle, input validation, and player assistance.
+ *
+ * @author Kevin Muñoz
+ * @author Leon Flor
  */
 public class Board {
 
-    // --- Constants and Fields ---
-
+    /** Size of the Sudoku board (6x6). */
     private final int size = 6;
+
+    /** 2D array of Cell objects representing the board state. */
     private Cell[][] sudoku;
+
+    /** Stores the fully solved board (used for validation or hint assistance). */
     private int[][] solution;
 
-    // --- Inner Classes ---
-
     /**
-     * Helper class for cell positions.
+     * Helper class to represent a row-column position on the board.
      */
     private static class Position {
         int row, col;
@@ -27,16 +32,15 @@ public class Board {
         }
     }
 
-    // --- Constructor ---
-
+    /**
+     * Default constructor.
+     */
     public Board() {
-        // Intentionally left blank
+        // Initialized via reset or generateBoard
     }
 
-    // --- Public API ---
-
     /**
-     * Initializes the board with a valid complete solution.
+     * Initializes the board with a valid complete solution using backtracking.
      */
     public void generateBoard() {
         sudoku = new Cell[size][size];
@@ -52,9 +56,10 @@ public class Board {
     }
 
     /**
-     * Removes values from the board to create a playable puzzle.
+     * Removes a specific number of cells from the board to create the puzzle.
+     * The remaining cells retain their correct solution values.
      *
-     * @param count Number of cells to clear.
+     * @param count Number of cells to clear randomly.
      */
     public void clearCells(int count) {
         List<Position> positions = new ArrayList<>();
@@ -73,9 +78,9 @@ public class Board {
     }
 
     /**
-     * Retrieves the board's current values.
+     * Retrieves the current values on the board.
      *
-     * @return 2D array of integers representing cell values.
+     * @return A 2D array of integers representing the values of all cells.
      */
     public int[][] getValues() {
         int[][] values = new int[size][size];
@@ -87,9 +92,12 @@ public class Board {
         return values;
     }
 
-
     /**
-     * Sets a value in a cell if it's editable.
+     * Sets a value into the board at the specified position if the cell is editable.
+     *
+     * @param row    Row index.
+     * @param col    Column index.
+     * @param value  Value to assign to the cell.
      */
     public void setValue(int row, int col, int value) {
         if (sudoku[row][col].isEditable()) {
@@ -97,16 +105,22 @@ public class Board {
         }
     }
 
+    /**
+     * Saves the current board state as the correct solution (used for hints).
+     */
     private void saveSolution() {
         solution = new int[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
                 solution[i][j] = sudoku[i][j].getValue();
-            }
-        }
     }
 
-
+    /**
+     * Reveals a single valid value in a random empty cell by attempting valid options.
+     * Does not use the original solution, only random valid values based on current state.
+     *
+     * @return true if a cell was revealed, false if no valid cell could be found.
+     */
     public boolean revealOneCell() {
         List<Position> vacias = new ArrayList<>();
 
@@ -135,14 +149,13 @@ public class Board {
             }
         }
 
-        return false; // No se pudo revelar ninguna
+        return false;
     }
 
-
-
-
     /**
-     * Checks whether the entire board is filled in and valid.
+     * Verifies if the current board is completely filled and valid.
+     *
+     * @return true if the board is complete and correct, false otherwise.
      */
     public boolean isComplete() {
         for (int i = 0; i < size; i++)
@@ -157,17 +170,20 @@ public class Board {
     }
 
     /**
-     * Resets the board to a new puzzle state.
+     * Resets the board by generating a new solution and clearing random cells.
+     * Default number of cleared cells: 14.
      */
     public void reset() {
         generateBoard();
-        clearCells(14); // Default number of cells to clear
+        clearCells(14);
     }
 
-    // --- Core Logic ---
-
     /**
-     * Recursively solves the Sudoku using backtracking.
+     * Solves the board completely using recursive backtracking.
+     *
+     * @param row Starting row index.
+     * @param col Starting column index.
+     * @return true if a solution was found, false otherwise.
      */
     public boolean solve(int row, int col) {
         if (row == size) return true;
@@ -192,7 +208,15 @@ public class Board {
     }
 
     /**
-     * Validates a number in a specific cell based on Sudoku rules.
+     * Validates if placing a specific value in a cell is allowed by Sudoku rules:
+     * - No duplicates in the row
+     * - No duplicates in the column
+     * - No duplicates in the 2x3 region
+     *
+     * @param row   Row index.
+     * @param col   Column index.
+     * @param value Value to validate.
+     * @return true if the value is valid, false otherwise.
      */
     public boolean isValid(int row, int col, int value) {
         // Row check
@@ -205,7 +229,7 @@ public class Board {
             if (i != row && sudoku[i][col].getValue() == value)
                 return false;
 
-        // Region check (2x3 block)
+        // 2x3 region check
         int startRow = (row / 2) * 2;
         int startCol = (col / 3) * 3;
 
