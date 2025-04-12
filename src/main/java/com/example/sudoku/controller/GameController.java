@@ -1,17 +1,20 @@
 package com.example.sudoku.controller;
 
 import com.example.sudoku.model.Board;
+import com.example.sudoku.view.MenuWindow;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.Optional;
@@ -20,7 +23,6 @@ import java.util.ResourceBundle;
 /**
  * Controller for the main game window of the Sudoku application.
  * Handles rendering the board, validating input, managing hint usage, and resetting the game.
- *
  * This class is linked to the FXML layout for the game interface.
  *
  * @author Kevin Muñoz
@@ -29,10 +31,7 @@ import java.util.ResourceBundle;
 public class GameController implements Initializable {
 
     @FXML
-    private Button newGameButton;
-
-    @FXML
-    private Button helpButton;
+    private Button newGameButton, menuButton, helpButton;
 
     @FXML
     private GridPane grid;
@@ -63,6 +62,27 @@ public class GameController implements Initializable {
     }
 
     /**
+     * Handles the event triggered by clicking the "Menu" button.
+     * Closes the current credits window and opens the main menu window.
+     *
+     * @param event the ActionEvent triggered by the button
+     */
+    @FXML
+    private void changeScene(ActionEvent event) {
+        try {
+            // Close the current stage
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            currentStage.close();
+
+            // Open the main menu window
+            MenuWindow menuWindow = new MenuWindow();
+            menuWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Consider logging the error instead
+        }
+    }
+
+    /**
      * Renders the current board state into the GridPane.
      * Sets styles, listeners, and handles input validation and game completion.
      *
@@ -79,38 +99,29 @@ public class GameController implements Initializable {
                 cell.setAlignment(Pos.CENTER);
                 cell.setFont(Font.font("Arial", 20));
 
-                String defaultStyle = "-fx-background-color: white;" +
-                        "-fx-border-color: black;" +
-                        "-fx-border-width: 1;" +
-                        "-fx-text-fill: #222;" +
-                        "-fx-alignment: center;" +
-                        "-fx-background-radius: 0;" +
-                        "-fx-border-radius: 0;";
-                cell.setStyle(defaultStyle);
+                // Base style
+                StringBuilder style = new StringBuilder("-fx-background-color: white; -fx-text-fill: #222; -fx-alignment: center;");
+
+                // Bordered blocks (2x3) with thicker lines
+                style.append("-fx-border-color: black;");
+                style.append("-fx-border-width: ");
+                style.append((row % 2 == 0 ? "2" : "0.5")).append(" "); // top
+                style.append((col == 5 ? "2" : "0.5")).append(" ");      // right
+                style.append((row == 5 ? "2" : "0.5")).append(" ");      // bottom
+                style.append((col % 3 == 0 ? "2" : "0.5")).append(";");  // left
+
+                style.append("-fx-background-radius: 0; -fx-border-radius: 0;");
+                cell.setStyle(style.toString());
 
                 if (boardValues[row][col] != 0) {
-                    // Fixed cell (not editable)
                     cell.setText(String.valueOf(boardValues[row][col]));
                     cell.setEditable(false);
-                    cell.setStyle(
-                            "-fx-background-color: #e6e6e6;" +
-                                    "-fx-border-color: black;" +
-                                    "-fx-border-width: 1;" +
-                                    "-fx-font-weight: bold;" +
-                                    "-fx-text-fill: #000;" +
-                                    "-fx-alignment: center;" +
-                                    "-fx-background-radius: 0;" +
-                                    "-fx-border-radius: 0;"
-                    );
+                    cell.setStyle(style + "-fx-background-color: #e6e6e6; -fx-font-weight: bold; -fx-text-fill: #000;");
                 } else {
-                    // Editable cell
                     final int currentRow = row;
                     final int currentCol = col;
 
-                    cell.setOnMouseClicked(event -> {
-                        System.out.println("🖱️ Clicked cell at [" + currentRow + "," + currentCol + "]");
-                        cell.setStyle(cell.getStyle() + "-fx-background-color: #f0f8ff;");
-                    });
+                    cell.setOnMouseClicked(event -> cell.setStyle(style + "-fx-background-color: #f0f8ff;"));
 
                     cell.textProperty().addListener((obs, oldText, newText) -> {
                         if (!newText.matches("[1-6]?") || newText.length() > 1) {
@@ -131,18 +142,9 @@ public class GameController implements Initializable {
                         }
 
                         if (value != 0 && !board.isValid(currentRow, currentCol, value)) {
-                            cell.setStyle(
-                                    "-fx-background-color: #ffcccc;" +
-                                            "-fx-border-color: #ff0000;" +
-                                            "-fx-border-width: 2;" +
-                                            "-fx-text-fill: #ff0000;" +
-                                            "-fx-alignment: center;" +
-                                            "-fx-background-radius: 0;" +
-                                            "-fx-border-radius: 0;"
-                            );
-                            System.out.println("❌ Invalid value at [" + currentRow + "," + currentCol + "]");
+                            cell.setStyle(style + "-fx-background-color: #ffcccc; -fx-border-color: #ff0000; -fx-text-fill: #ff0000; -fx-border-width: 2;");
                         } else {
-                            cell.setStyle(defaultStyle);
+                            cell.setStyle(style.toString());
                         }
                     });
                 }
