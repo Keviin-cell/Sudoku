@@ -96,6 +96,33 @@ public class Board {
         }
     }
 
+    public boolean revealOneCell() {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+
+                if (sudoku[row][col].getValue() == 0) {
+
+                    List<Integer> options = Arrays.asList(1, 2, 3, 4, 5, 6);
+                    Collections.shuffle(options);
+
+                    for (int value : options) {
+                        if (isValid(row, col, value)) {
+
+                            sudoku[row][col].setValue(value);
+                            sudoku[row][col].setEditable(false);
+
+                            return true;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 
     /**
      * Checks whether the entire board is filled in and valid.
@@ -117,7 +144,7 @@ public class Board {
      */
     public void reset() {
         generateBoard();
-        clearCells(12); // Default number of cells to clear
+        clearCells(14); // Default number of cells to clear
     }
 
     // --- Core Logic ---
