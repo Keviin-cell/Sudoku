@@ -1,44 +1,96 @@
 package com.example.sudoku.controller;
 
+import com.example.sudoku.view.GameWindow;
+import com.example.sudoku.view.InstructionsWindow;
+import com.example.sudoku.view.CreditsWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
+/**
+ * Controller for the main menu of the Sudoku application.
+ * Handles navigation between the main menu and other windows (Game, Instructions, Credits).
+ *
+ * Provides methods to handle button clicks and open corresponding windows.
+ *
+ * @author Kevin Muñoz
+ * @author Leon Flor
+ */
 public class MenuController {
+
+    @FXML
+    private Button btnPlay;
+
+    @FXML
+    private Button btnInstructions;
+
+    @FXML
+    private Button btnCredits;
+
     /**
-     * Cambia la escena actual a la vista correspondiente según el botón presionado.
+     * Closes the current JavaFX stage (window) from which the event was triggered.
      *
-     * <p>El método obtiene el botón que activó el evento, extrae su ID y lo utiliza para
-     * determinar qué archivo FXML debe cargarse.</p>
+     * @param event the ActionEvent triggered by a button click
+     */
+    private void closeScene(ActionEvent event) {
+        try {
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            currentStage.close();
+        } catch (Exception e) {
+            e.printStackTrace(); // Consider using a logging framework instead
+        }
+    }
+
+    /**
+     * Handles the "Play" button click event.
+     * Closes the current menu window and opens the game window.
      *
-     * @param event Evento de acción generado al hacer clic en un botón del menú.
+     * @param event the ActionEvent triggered by clicking the Play button
      */
     @FXML
-    public void changeScene(ActionEvent event) {
+    void onPlayClick(ActionEvent event) {
         try {
-            // Obtener ID del botón presionado
-            String buttonId = ((Button) event.getSource()).getId();
+            closeScene(event);
+            GameWindow gameWindow = new GameWindow();
+            gameWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Proper error handling recommended
+        }
+    }
 
-            // Generar el nombre del archivo FXML
-            String fxmlFile = buttonId.replace("Button", "-view.fxml");
+    /**
+     * Handles the "Instructions" button click event.
+     * Closes the current menu window and opens the instructions window.
+     *
+     * @param event the ActionEvent triggered by clicking the Instructions button
+     */
+    @FXML
+    void onInstructionsClick(ActionEvent event) {
+        try {
+            closeScene(event);
+            InstructionsWindow instructionsWindow = new InstructionsWindow();
+            instructionsWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Proper error handling recommended
+        }
+    }
 
-            // Cargar el archivo FXML desde el paquete correcto
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/sudoku/fxml/" + fxmlFile));
-            Parent newScene = loader.load();
-
-            // Cambiar la escena en la misma ventana
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(newScene));
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Handles the "Credits" button click event.
+     * Closes the current menu window and opens the credits window.
+     *
+     * @param event the ActionEvent triggered by clicking the Credits button
+     */
+    @FXML
+    void onCreditsClick(ActionEvent event) {
+        try {
+            closeScene(event);
+            CreditsWindow creditsWindow = new CreditsWindow();
+            creditsWindow.show();
+        } catch (Exception e) {
+            e.printStackTrace(); // Proper error handling recommended
         }
     }
 }
