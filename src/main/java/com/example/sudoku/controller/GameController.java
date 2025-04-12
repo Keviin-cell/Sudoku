@@ -2,22 +2,36 @@ package com.example.sudoku.controller;
 
 import com.example.sudoku.model.Board;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class GameController implements Initializable {
 
     @FXML
+    private Button newGameButton;
+
+    @FXML
+    private Button helpButton;
+
+    @FXML
     private GridPane grid;
 
     private Board board;
+
+    private int remainingHints = 3;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -104,7 +118,62 @@ public class GameController implements Initializable {
                 }
 
                 grid.add(cell, col, row);
+                if (board.isComplete()){
+                    Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+                    alerta.setTitle("¡Juego Terminado!");
+                    alerta.setHeaderText("El juego ha acabado");
+                    alerta.setContentText("Felicidades. Has ganado");
+                }
             }
         }
     }
+
+    @FXML
+    private void OnNewGameClick(){
+        Alert alerta = new Alert(Alert.AlertType.CONFIRMATION);
+        alerta.setTitle("Confirmación nuevo juego");
+        alerta.setHeaderText("¿Estás seguro de empezar un nuevo juego?");
+        alerta.setContentText("Tú progreso no será guardado.");
+
+        Optional<ButtonType> resultado = alerta.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            board = new Board();
+            remainingHints = 3;
+
+            Platform.runLater(() -> {
+                board.reset();
+                renderBoard(board.getValues());
+            });
+
+            System.out.println("Confirmado por el usuario");
+        } else {
+            System.out.println("Acción cancelada");
+        }
+    }
+
+    @FXML
+    private void OnHelpButtonClick(){
+        if (remainingHints == 0) {
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Ayuda agotada");
+            alerta.setHeaderText("Ya no puedes pedir más ayuda");
+            alerta.setContentText("Has usado las 3 ayudas disponibles.");
+            alerta.showAndWait();
+            return;
+        }
+
+        boolean revelada = board.revealOneCell();
+        if (revelada) {
+            renderBoard(board.getValues()); // Actualiza la vista
+            remainingHints--;
+            System.out.println("Quedan " + remainingHints + " ayudas.");
+        } else {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Tablero completo");
+            alerta.setHeaderText("No se pudo revelar ninguna celda");
+            alerta.setContentText("Ya no hay más celdas vacías.");
+            alerta.showAndWait();
+        }
+    }
+
 }
