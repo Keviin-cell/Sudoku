@@ -8,10 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -35,6 +32,9 @@ public class GameController implements Initializable {
 
     @FXML
     private GridPane grid;
+
+    @FXML
+    private Label remain;
 
     /** The game board instance used for logic and state management. */
     private Board board;
@@ -113,6 +113,7 @@ public class GameController implements Initializable {
                 style.append("-fx-background-radius: 0; -fx-border-radius: 0;");
                 cell.setStyle(style.toString());
 
+
                 if (boardValues[row][col] != 0) {
                     cell.setText(String.valueOf(boardValues[row][col]));
                     cell.setEditable(false);
@@ -121,7 +122,10 @@ public class GameController implements Initializable {
                     final int currentRow = row;
                     final int currentCol = col;
 
+
+
                     cell.setOnMouseClicked(event -> cell.setStyle(style + "-fx-background-color: #f0f8ff;"));
+                    remain.setText(""+ board.remainingNum(boardValues));
 
                     cell.textProperty().addListener((obs, oldText, newText) -> {
                         if (!newText.matches("[1-6]?") || newText.length() > 1) {
@@ -130,7 +134,7 @@ public class GameController implements Initializable {
                         }
 
                         int value = newText.isEmpty() ? 0 : Integer.parseInt(newText);
-                        board.setValue(currentRow, currentCol, value);
+
 
                         if (board.isComplete()) {
                             Alert alerta = new Alert(Alert.AlertType.INFORMATION);
@@ -146,12 +150,14 @@ public class GameController implements Initializable {
                         } else {
                             cell.setStyle(style.toString());
                         }
+                        remain.setText(""+ board.remainingNum(boardValues));
                     });
                 }
 
                 grid.add(cell, col, row);
             }
         }
+        remain.setText(""+ board.remainingNum(boardValues));
     }
 
     /**

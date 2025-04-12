@@ -251,9 +251,8 @@ public class Board {
     }
 
     //
-    public void remainingNum(int[][] boardValues) {
+    public int remainingNum(int[][] boardValues) {
         int count = 0;
-        int[][] numbers = saveSolution();
 
         for(int row = 0; row < size; row++){
             for(int col = 0; col < size; col++) {
@@ -263,8 +262,8 @@ public class Board {
             }
         }
 
-        int totales = size - count;
-        System.out.println("Los 4 restantes son: " + totales +" casillas");
+        int totales = 6 - count;
+        return totales;
     }
 
 
